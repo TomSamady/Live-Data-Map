@@ -1,0 +1,5 @@
+Earth atlas texture derived from Natural Earth 1:50m country GeoJSON, inspected 27 October 2026. Public-domain map data. Made with Natural Earth.
+https://www.naturalearthdata.com/about/terms-of-use/
+Source: https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_admin_0_countries.geojson
+Source SHA-256: 3e458fc036ad0a66411f2c1e6cac49c5d7bfb81cb1123bc513b22511a2b7fdeb
+Static visual texture only; not interactive country selection. Uses Natural Earth de facto boundary conventions.
