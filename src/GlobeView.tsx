@@ -2,6 +2,25 @@ import { useEffect, useRef, useState } from 'react'
 import Globe from 'react-globe.gl'
 import type { GlobeMethods } from 'react-globe.gl'
 
+type CountryGeometry = {
+  type: 'Polygon' | 'MultiPolygon'
+  coordinates: number[][][] | number[][][][]
+}
+
+type CountryFeature = {
+  type: 'Feature'
+  properties: {
+    ADM0_A3: string
+    ADMIN: string
+  }
+  geometry: CountryGeometry
+}
+
+type CountryCollection = {
+  type: 'FeatureCollection'
+  features: CountryFeature[]
+}
+
 const HOME = { lat: 22, lng: 10, altitude: 2.2 }
 
 export default function GlobeView() {
@@ -10,6 +29,8 @@ export default function GlobeView() {
   const [size, setSize] = useState({ width: 0, height: 0 })
   const [ready, setReady] = useState(false)
   const [error, setError] = useState(false)
+  const [countries, setCountries] = useState<CountryFeature[]>([])
+  const [countryError, setCountryError] = useState(false)
 
   useEffect(() => {
     if (!container.current) return
@@ -26,6 +47,41 @@ export default function GlobeView() {
     image.onerror = () => setError(true)
     image.src = '/earth.svg'
     return () => { image.onerror = null }
+  }, [])
+
+  useEffect(() => {
+    const controller = new AbortController()
+
+    async function loadCountries() {
+      try {
+        const response = await fetch('/countries.geojson', {
+          signal: controller.signal,
+        })
+
+        if (!response.ok) {
+          throw new Error(`Country data request failed: ${response.status}`)
+        }
+
+        const data = (await response.json()) as CountryCollection
+
+        if (
+          data.type !== 'FeatureCollection' ||
+          !Array.isArray(data.features)
+        ) {
+          throw new Error('Country data is not a GeoJSON feature collection')
+        }
+
+        setCountries(data.features)
+      } catch {
+        if (!controller.signal.aborted) {
+          setCountryError(true)
+        }
+      }
+    }
+
+    void loadCountries()
+
+    return () => controller.abort()
   }, [])
 
   function moveCamera(view: { lat?: number; lng?: number; altitude?: number }) {
