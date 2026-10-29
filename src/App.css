@@ -14,4 +14,5 @@ h1 span { color: #83d8c0; }
 .app-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 5vw; border-top: 1px solid #1c2b42; font-size: .75rem; color: #91a7c2; }
 .app-footer p { margin: 0; max-width: 48ch; }
 .app-footer a { flex-shrink: 0; text-underline-offset: 4px; }
+.country-status { position: absolute; top: 12px; left: 5vw; margin: 0; color: #aec3d9; font-size: 0.8rem; pointer-events: none; }
 @media (max-width: 600px) { .app-header { padding-top: 20px; } .prototype-badge { font-size: .65rem; padding: 6px 9px; } .globe-stage { min-height: 440px; height: 70svh; } .globe-toolbar { bottom: 48px; right: 50%; transform: translateX(50%); white-space: nowrap; } .globe-help { bottom: 18px; left: 0; width: 100%; text-align: center; } .app-footer { align-items: flex-start; flex-direction: column; gap: 10px; } }

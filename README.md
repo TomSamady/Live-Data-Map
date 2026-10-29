@@ -25,7 +25,7 @@ Country selection, search, profiles and the ISS layer are not implemented yet. D
 | Code quality | ESLint and typescript-eslint |
 | Package management | npm with a committed lockfile |
 
-The application currently runs entirely in the browser. No backend, database, API keys or environment variables are required.
+The application currently runs entirely in the browser. No backend or database is required. The default road map needs no key; optional MapTiler imagery requires local configuration as described below.
 
 ## Getting started
 
@@ -123,3 +123,29 @@ The current 3D bundle triggers Vite's large-chunk warning. Loading cost and mobi
 TypeScript is pinned to `6.0.3` because the installed typescript-eslint release requires TypeScript below `6.1.0`. Upgrade these dependencies together and check both lint and build rather than bypassing peer-dependency checks.
 
 There is no automated test suite configured yet. Passing lint and build does not verify browser interactions; use manual browser checks for camera behaviour, resizing and input controls.
+
+## Optional bilingual road maps (MapTiler)
+
+Cesium renders the globe with bundled Natural Earth II imagery at distance, fading into road tiles closer in. OpenStreetMap remains the default. MapTiler is enabled only when both configuration values below are present.
+
+1. Create a MapTiler Cloud account and review the current plan limits. A free testing/non-commercial plan is available; do not enable paid billing unless intended.
+2. In Map Designer, customise **Streets**. Configure country and city label layers with the **local/native name first** and **English translation underneath**, leaving street labels local. Global translation settings may affect other labels, so review the relevant country/place layers separately. Avoid duplicate lines where names match and retain local names when no English value is available.
+3. Save/publish the custom map in MapTiler and copy its map ID. Confirm its **raster XYZ** preview includes the bilingual labels; Cesium does not execute MapTiler SDK language settings or a vector style JSON. Check plan support for custom raster output before proceeding.
+4. Copy `.env.example` to `.env.local` and fill in:
+
+```dotenv
+VITE_MAPTILER_API_KEY=your_browser_api_key
+VITE_MAPTILER_MAP_ID=your_saved_bilingual_map_id
+```
+
+5. Restrict the browser key to intended origins in MapTiler, including the local development address. Restart `npm run dev` after changing the environment file. Production hosting needs the same values set before building.
+
+Vite embeds `VITE_` values in browser code: these keys are not server secrets. Use a dedicated restricted browser key, not an administrative credential. `.env.local` is excluded from Git; `.env.example` contains no key.
+
+The integration requests 256px raster XYZ tiles through zoom 19, preserving the current camera-height fade and Natural Earth overview. MapTiler logo and OpenStreetMap attribution appear with the road layer; preserve any additional credits required by the selected map.
+
+Before adopting the new style, compare London, Cairo, Tokyo and the Kenya/Somalia area at regional and street scales: check native/English country and city labels, local street names, roads, borders, water, green land areas and close-up detail. Check zooming both ways, tile errors, attribution and Safari rendering. Similar source data does not guarantee identical style or feature coverage.
+
+Until an account, key and saved bilingual style are supplied, MapTiler tiles and bilingual output remain unverified. Invalid credentials or map IDs may produce blank road tiles; clear either configuration value and restart to return to OpenStreetMap.
+
+References: [MapTiler language settings](https://docs.maptiler.com/guides/map-design/global-map-settings/), [Cesium integration](https://docs.maptiler.com/cesium/), [API](https://docs.maptiler.com/cloud/api/reference/), [pricing](https://www.maptiler.com/cloud/pricing/).

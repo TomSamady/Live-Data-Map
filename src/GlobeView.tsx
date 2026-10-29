@@ -129,6 +129,11 @@ export default function GlobeView() {
           {error ? 'Earth texture could not load. Refresh the page to try again.' : 'Loading Earth…'}
         </p>
       )}
+        <p className="country-status" role="status">
+        {countryError
+          ? 'Country boundaries could not load.'
+          : `Country map features loaded: ${countries.length}`}
+        </p>
       <div className="globe-toolbar" aria-label="Globe controls">
         <button disabled={!ready || error} onClick={() => zoom(0.8)} aria-label="Zoom in">+</button>
         <button disabled={!ready || error} onClick={() => zoom(1.25)} aria-label="Zoom out">−</button>
